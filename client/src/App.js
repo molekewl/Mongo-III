@@ -31,7 +31,7 @@ class App extends Component {
     return (
       <div className="App">
         <div className="App-header">
-          <h3>Welcome To Mongo III</h3>
+          <h3>Vlog Junky</h3>
           <img alt="mongo logo" className="App-logo" src={logo} />
           {loggedIn ? <div className="Inline-button">
             <button className="btn btn-primary btn-sm" onClick={this.doLogout}>Logout</button>
