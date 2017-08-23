@@ -12,7 +12,8 @@ export default class SingleBlogPost extends Component {
         title: 'This is a FAKE blog post title', 
         _id: '234lj23kjh', 
         content: 'This is some FAKE content',
-        author: 'Fake Author',
+        // author: 'Fake Author',
+        author: 'ObjectID(1akjsdlfkj)',
         comments: [
           {text:'This is a FAKE comment', author: 'Stanley Yelnats'},
         ]},
@@ -28,9 +29,10 @@ export default class SingleBlogPost extends Component {
 
   getBlogPost(){
     const { id } = this.props.match.params
-    console.log(id);
+    // console.log(id);
     axios.get(`http://localhost:3030/posts/${id}`)
       .then((data) => {
+        console.log(data.data);
         this.setState({post: data.data});
       })
       .catch((err) => {
@@ -61,12 +63,14 @@ export default class SingleBlogPost extends Component {
   handleCommentText(e) {
     this.setState({comment: e.target.value});
   }
-
+  // delete line: 72 comments: when comments is working.{comments && comments.map
   render() {
-    const { title, comments, content } = this.state.post;
+    const { title, comments, content, author } = this.state.post;
+    console.log(author);
     return (
       <div>
         <h4>{title}</h4>
+        <h5>{author}</h5>
         <div>{content}</div>
         {comments.map((comment, ind) => {
           return <Comment comment={comment} key={ind} />

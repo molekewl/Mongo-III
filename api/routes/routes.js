@@ -17,6 +17,7 @@ module.exports = (app) => {
 
   app.route('/posts/:id')
     .get(controllerMethods.singlePost)
-    .put(controllerMethods.deletePost);
+    // .put(controllerMethods.deletePost)
+    .put(controllerMethods.addComment);
 
 };

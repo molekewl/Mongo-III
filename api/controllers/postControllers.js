@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 
 const Post = mongoose.model('Post');
-// const Author = mongoose.model('Author');
-// const Comment = mongoose.model('Comment');
+const Author = mongoose.model('Author');
+const Comment = mongoose.model('Comment');
 
 const STATUS_USER_ERROR = 422;
+const STATUS_SERVER_ERROR = 500;
 
 // Post: '/new-post takes in a new blog post object & saves it to the db
 // You'll need set up an array of comments that can be `referenced` users by `ObjectId`.
@@ -41,35 +42,63 @@ const listPosts = (req, res) => {
 // This get Post by Id end point should return an object of a single 
 // post's data:
 const singlePost = (req, res) => {
-  // const { id } = req.params;
-  // Post.findById(id)
-  //   .populate('title', 'content')
-  //   .exec()
-  //   .then((post) => {
-  //     res.json(post);
-  //   })
-  //   .catch((err) => {
-  //     res.status(STATUS_USER_ERROR);
-  //     res.json({ stack: err.stack, message: err.message });
-  //   });
-};
-
-const deletePost = (req, res) => {
   const { id } = req.params;
-  const post = Post.findByIdAndRemove(id)
+  Post.findById(id)
+    .populate()
     .exec()
     .then((post) => {
       res.json(post);
     })
     .catch((err) => {
-      res.status(STATUS_USER_ERROR);
+      res.status(STATUS_SERVER_ERROR);
       res.json({ stack: err.stack, message: err.message });
     });
 };
+
+const addComment = (req, res) => {
+  const { id } = req.params;
+  const { text, author } = req.query;
+
+  const newComment = new Comment({ _parent: id, text, author });
+  newComment.save()
+    .then((comment) => {
+      Post.findById(id)
+        // .populate('text', 'author')
+        .exec()
+        .then((post) => {
+          post.comments.push(comment);
+          post.save();
+          // res.send({ success: true })
+          res.json(comment);
+        })
+        .catch((err) => {
+        res.status(STATUS_USER_ERROR);
+        res.json({ stack: err.stack, message: err.messge });
+      });
+    })
+    .catch((err) => {
+      res.status(STATUS_USER_ERROR);
+      res.json({ stack: err.stack, message: err.messge });
+    });
+};
+
+// const deletePost = (req, res) => {
+//   const { id } = req.params;
+//   const post = Post.findByIdAndRemove(id)
+//     .exec()
+//     .then((post) => {
+//       res.json(post);
+//     })
+//     .catch((err) => {
+//       res.status(STATUS_USER_ERROR);
+//       res.json({ stack: err.stack, message: err.message });
+//     });
+// };
 
 module.exports = {
   newPost,
   listPosts,
   singlePost,
-  deletePost
+  addComment,
+  // deletePost
 };
