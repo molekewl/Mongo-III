@@ -11,8 +11,8 @@ const STATUS_SERVER_ERROR = 500;
 // You'll need set up an array of comments that can be `referenced` users by `ObjectId`.
 // It will also need a `reference` to the author (user) of the post. 
 const newPost = (req, res) => {
-  const { title, content } = req.body;
-  const post = new Post({ title, content });
+  const { title, content, author } = req.body;
+  const post = new Post({ title, content, author });
   post.save()
     .then((newPost) => {
       res.json(newPost);
@@ -44,7 +44,7 @@ const listPosts = (req, res) => {
 const singlePost = (req, res) => {
   const { id } = req.params;
   Post.findById(id)
-    .populate()
+    .populate('author comments.author', 'username')
     .exec()
     .then((post) => {
       res.json(post);
@@ -57,13 +57,13 @@ const singlePost = (req, res) => {
 
 const addComment = (req, res) => {
   const { id } = req.params;
-  const { text, author } = req.query;
+  const { text, author } = req.body;
 
   const newComment = new Comment({ _parent: id, text, author });
   newComment.save()
     .then((comment) => {
       Post.findById(id)
-        // .populate('text', 'author')
+        .populate('comments.author', 'username')
         .exec()
         .then((post) => {
           post.comments.push(comment);

@@ -66,11 +66,11 @@ export default class SingleBlogPost extends Component {
   // delete line: 72 comments: when comments is working.{comments && comments.map
   render() {
     const { title, comments, content, author } = this.state.post;
-    console.log(author);
+
     return (
       <div>
         <h4>{title}</h4>
-        <h5>{author}</h5>
+        <h5>{author.username}</h5>
         <div>{content}</div>
         {comments.map((comment, ind) => {
           return <Comment comment={comment} key={ind} />
